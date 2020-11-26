@@ -3,6 +3,11 @@ import SwiftUI
 struct ContentView: View {
     @State private var word: String = ""
     @State private var isPalindrome: Bool = false
+    private let viewModel: MainViewModel
+    
+    init(viewModel: MainViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         VStack(alignment: .center) {
@@ -23,6 +28,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(viewModel: MainViewModel())
     }
 }
