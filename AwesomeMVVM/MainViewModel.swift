@@ -1,9 +1,16 @@
 import Foundation
 
-class MainViewModel {
+class MainViewModel: ObservableObject {
     
     private var favourites: [Word] = []
     private var history: [Word] = []
+    private var dataProvider: DataProvider.Type
+    
+    @Published var validatedWord: Word?
+    
+    init(dataProvider: DataProvider.Type) {
+        self.dataProvider = dataProvider
+    }
     
     // Binding?
     
@@ -15,10 +22,11 @@ class MainViewModel {
     
     func validate(word: String) {
         // Result comes from background thread
-        DataProvider.validate(
+        dataProvider.validate(
             word: word, completion: { result in
                 switch result {
                     case .success(let word):
+                        self.validatedWord = word
                         self.history.append(word)
                     case .failure(let error):
                         // Check later?
@@ -31,11 +39,16 @@ class MainViewModel {
     // Persistence
 }
 
-class DataProvider {
+protocol DataProviderProtocol {
+    /// "For testing"
+}
+
+class DataProvider: DataProviderProtocol {
     static func validate(word: String, completion: @escaping (Swift.Result<Word, PError>) -> Void) {
         DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
             // TODO: Implement random success/failure
             // Parser -> implement?
+            print("we are validating \(word)")
             completion(.success(
                 Word.fakes.randomElement()!
             ))
